@@ -1,0 +1,196 @@
+{
+  "version": "2.2.0",
+  "schema": "lothrik-d4-uniques-v2",
+  "uniques": [
+    {
+      "id": "harlequin_crest",
+      "name": "Harlequin Crest",
+      "slot": "helm",
+      "class": "all",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Gain #% Damage Reduction. In addition, gain +# to all Skills.",
+        "ranges": {"damage_reduction": {"min": 10, "max": 20}, "all_skills": {"min": 3, "max": 4}}
+      },
+      "affixes": [
+        {"name": "Maximum Life", "ranges": {"sacred": {"min": 200, "max": 700}, "ancestral": {"min": 700, "max": 1400}}},
+        {"name": "Cooldown Reduction", "ranges": {"sacred": {"min": 3.5, "max": 7.0}, "ancestral": {"min": 7.0, "max": 13.5}}},
+        {"name": "Resource Generation", "ranges": {"sacred": {"min": 5, "max": 12}, "ancestral": {"min": 12, "max": 24}}},
+        {"name": "Resistance to All Elements", "ranges": {"sacred": {"min": 6, "max": 14}, "ancestral": {"min": 14, "max": 22}}}
+      ]
+    },
+    {
+      "id": "shako",
+      "name": "Harlequin Crest (Shako)",
+      "slot": "helm",
+      "class": "all",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Gain #% Damage Reduction. In addition, gain +# to all Skills.",
+        "ranges": {"damage_reduction": {"min": 10, "max": 20}, "all_skills": {"min": 3, "max": 4}}
+      },
+      "affixes": [
+        {"name": "Maximum Life", "ranges": {"ancestral": {"min": 700, "max": 1400}}},
+        {"name": "Cooldown Reduction", "ranges": {"ancestral": {"min": 7.0, "max": 13.5}}},
+        {"name": "Resource Generation", "ranges": {"ancestral": {"min": 12, "max": 24}}},
+        {"name": "Resistance to All Elements", "ranges": {"ancestral": {"min": 14, "max": 22}}}
+      ]
+    },
+    {
+      "id": "tyrael_might",
+      "name": "Tyrael's Might",
+      "slot": "chest",
+      "class": "all",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Attack Speed is increased by #% for each second you have not taken damage, up to #%.",
+        "ranges": {"attack_speed_per_second": {"min": 2, "max": 4}, "max_attack_speed": {"min": 10, "max": 20}}
+      },
+      "affixes": [
+        {"name": "Strength", "ranges": {"ancestral": {"min": 76, "max": 150}}},
+        {"name": "Armor", "ranges": {"ancestral": {"min": 900, "max": 1800}}},
+        {"name": "Maximum Life", "ranges": {"ancestral": {"min": 700, "max": 1400}}},
+        {"name": "Resistance to All Elements", "ranges": {"ancestral": {"min": 14, "max": 22}}}
+      ]
+    },
+    {
+      "id": "grandfather",
+      "name": "The Grandfather",
+      "slot": "weapon",
+      "class": "barbarian",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Increases your Critical Strike Damage by +#%. The other properties on this weapon can roll higher than normal.",
+        "ranges": {"crit_dmg": {"min": 60, "max": 100}}
+      },
+      "affixes": [
+        {"name": "Critical Strike Damage", "ranges": {"ancestral": {"min": 50, "max": 100}}},
+        {"name": "Maximum Life", "ranges": {"ancestral": {"min": 700, "max": 1400}}},
+        {"name": "Strength", "ranges": {"ancestral": {"min": 76, "max": 200}}},
+        {"name": "Overpower Damage", "ranges": {"ancestral": {"min": 44, "max": 90}}}
+      ]
+    },
+    {
+      "id": "banished_lord_talisman",
+      "name": "Banished Lord's Talisman",
+      "slot": "amulet",
+      "class": "barbarian",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "After spending # total Fury, your next attack Overpowers.",
+        "ranges": {"fury_threshold": {"min": 100, "max": 50}}
+      },
+      "affixes": [
+        {"name": "Strength", "ranges": {"ancestral": {"min": 76, "max": 150}}},
+        {"name": "Critical Strike Chance", "ranges": {"ancestral": {"min": 5.5, "max": 10.0}}},
+        {"name": "Overpower Damage", "ranges": {"ancestral": {"min": 22, "max": 44}}},
+        {"name": "Core Skill Damage", "ranges": {"ancestral": {"min": 19, "max": 36}}}
+      ]
+    },
+    {
+      "id": "ring_starless_skies",
+      "name": "Ring of Starless Skies",
+      "slot": "ring",
+      "class": "all",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Consecutive Core Skill casts reduce the Resource cost of your next Core Skill by #%, up to a maximum of #%.",
+        "ranges": {"cost_reduction_per_cast": {"min": 8, "max": 12}, "max_cost_reduction": {"min": 40, "max": 60}}
+      },
+      "affixes": [
+        {"name": "Critical Strike Chance", "ranges": {"ancestral": {"min": 5.5, "max": 10.0}}},
+        {"name": "Critical Strike Damage", "ranges": {"ancestral": {"min": 26, "max": 50}}},
+        {"name": "Core Skill Damage", "ranges": {"ancestral": {"min": 19, "max": 36}}},
+        {"name": "Lucky Hit Chance", "ranges": {"ancestral": {"min": 7.0, "max": 13.5}}}
+      ]
+    },
+    {
+      "id": "doombringer",
+      "name": "Doombringer",
+      "slot": "weapon",
+      "class": "all",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Lucky Hit: Up to a #% chance to deal #% base damage to surrounding enemies and reduce their damage dealt by #% for 2 seconds.",
+        "ranges": {
+          "proc_chance": {"min": 15, "max": 25},
+          "damage_pct": {"min": 60, "max": 100},
+          "damage_reduction": {"min": 25, "max": 35}
+        }
+      },
+      "affixes": [
+        {"name": "Core Skill Damage", "ranges": {"ancestral": {"min": 19, "max": 36}}},
+        {"name": "Maximum Life", "ranges": {"ancestral": {"min": 700, "max": 1400}}},
+        {"name": "Strength", "ranges": {"ancestral": {"min": 76, "max": 150}}},
+        {"name": "Overpower Damage", "ranges": {"ancestral": {"min": 22, "max": 44}}}
+      ]
+    },
+    {
+      "id": "melted_heart_selig",
+      "name": "Melted Heart of Selig",
+      "slot": "amulet",
+      "class": "all",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Gain +# Maximum Resource. In addition, when you take damage, drain #% of the damage dealt from your Primary Resource instead of your Life.",
+        "ranges": {"max_resource": {"min": 30, "max": 60}, "drain_percent": {"min": 60, "max": 90}}
+      },
+      "affixes": [
+        {"name": "Critical Strike Chance", "ranges": {"ancestral": {"min": 5.5, "max": 10.0}}},
+        {"name": "Critical Strike Damage", "ranges": {"ancestral": {"min": 26, "max": 50}}},
+        {"name": "Core Skill Damage", "ranges": {"ancestral": {"min": 19, "max": 36}}},
+        {"name": "Resource Generation", "ranges": {"ancestral": {"min": 12, "max": 24}}}
+      ]
+    },
+    {
+      "id": "razorplate",
+      "name": "Razorplate",
+      "slot": "chest",
+      "class": "all",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "Gain # Thorns.",
+        "ranges": {"thorns": {"min": 9000, "max": 15000}}
+      },
+      "affixes": [
+        {"name": "Dexterity", "ranges": {"ancestral": {"min": 76, "max": 150}}},
+        {"name": "Thorns", "ranges": {"ancestral": {"min": 2000, "max": 5000}}},
+        {"name": "Armor", "ranges": {"ancestral": {"min": 900, "max": 1800}}},
+        {"name": "Resistance to All Elements", "ranges": {"ancestral": {"min": 14, "max": 22}}}
+      ]
+    },
+    {
+      "id": "ahavarions_ring",
+      "name": "Ahavarion Spear of Lycander",
+      "slot": "weapon",
+      "class": "druid_sorcerer",
+      "item_power_range": {"min": 800, "max": 925},
+      "unique_power": {
+        "description": "After killing an Elite enemy, gain a random Shrine effect for # seconds.",
+        "ranges": {"duration": {"min": 5, "max": 10}}
+      },
+      "affixes": [
+        {"name": "Intelligence", "ranges": {"ancestral": {"min": 76, "max": 150}}},
+        {"name": "Critical Strike Chance", "ranges": {"ancestral": {"min": 5.5, "max": 10.0}}},
+        {"name": "Core Skill Damage", "ranges": {"ancestral": {"min": 19, "max": 36}}},
+        {"name": "Lucky Hit Chance", "ranges": {"ancestral": {"min": 7.0, "max": 13.5}}}
+      ]
+    }
+  ],
+  "runewords": [
+    {
+      "id": "runeword_ohm_ber",
+      "name": "Ohm + Ber",
+      "slots": ["weapon", "offhand"],
+      "description": "Critical Strike Damage increased by #%. Gain # Fury.",
+      "effect": {"crit_dmg_bonus": {"min": 20, "max": 35}, "fury": {"min": 10, "max": 20}}
+    },
+    {
+      "id": "runeword_mal_tir",
+      "name": "Mal + Tir",
+      "slots": ["armor"],
+      "description": "Damage Reduction increased by #%. Gain # Maximum Life.",
+      "effect": {"damage_reduction": {"min": 10, "max": 20}, "max_life": {"min": 500, "max": 1000}}
+    }
+  ]
+}

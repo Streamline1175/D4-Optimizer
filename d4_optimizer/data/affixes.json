@@ -1,0 +1,226 @@
+{
+  "version": "2.2.0",
+  "schema": "lothrik-d4-affixes-v2",
+  "affixes": [
+    {
+      "id": "affix_dex",
+      "name": "Dexterity",
+      "description": "+# Dexterity",
+      "slots": ["helm", "chest", "gloves", "pants", "boots", "amulet", "ring", "weapon", "offhand"],
+      "ranges": {
+        "sacred": {"min": 26, "max": 75},
+        "ancestral": {"min": 76, "max": 150}
+      },
+      "type": "core_stat"
+    },
+    {
+      "id": "affix_str",
+      "name": "Strength",
+      "description": "+# Strength",
+      "slots": ["helm", "chest", "gloves", "pants", "boots", "amulet", "ring", "weapon", "offhand"],
+      "ranges": {
+        "sacred": {"min": 26, "max": 75},
+        "ancestral": {"min": 76, "max": 150}
+      },
+      "type": "core_stat"
+    },
+    {
+      "id": "affix_int",
+      "name": "Intelligence",
+      "description": "+# Intelligence",
+      "slots": ["helm", "chest", "gloves", "pants", "boots", "amulet", "ring", "weapon", "offhand"],
+      "ranges": {
+        "sacred": {"min": 26, "max": 75},
+        "ancestral": {"min": 76, "max": 150}
+      },
+      "type": "core_stat"
+    },
+    {
+      "id": "affix_will",
+      "name": "Willpower",
+      "description": "+# Willpower",
+      "slots": ["helm", "chest", "gloves", "pants", "boots", "amulet", "ring", "weapon", "offhand"],
+      "ranges": {
+        "sacred": {"min": 26, "max": 75},
+        "ancestral": {"min": 76, "max": 150}
+      },
+      "type": "core_stat"
+    },
+    {
+      "id": "affix_max_life",
+      "name": "Maximum Life",
+      "description": "+# Maximum Life",
+      "slots": ["helm", "chest", "pants", "amulet", "ring"],
+      "ranges": {
+        "sacred": {"min": 200, "max": 700},
+        "ancestral": {"min": 700, "max": 1400}
+      },
+      "type": "defense"
+    },
+    {
+      "id": "affix_armor",
+      "name": "Armor",
+      "description": "+# Armor",
+      "slots": ["helm", "chest", "pants", "boots"],
+      "ranges": {
+        "sacred": {"min": 300, "max": 900},
+        "ancestral": {"min": 900, "max": 1800}
+      },
+      "type": "defense"
+    },
+    {
+      "id": "affix_resist_all",
+      "name": "Resistance to All Elements",
+      "description": "+#% Resistance to All Elements",
+      "slots": ["helm", "chest", "pants", "boots", "amulet", "ring"],
+      "ranges": {
+        "sacred": {"min": 6, "max": 14},
+        "ancestral": {"min": 14, "max": 22}
+      },
+      "type": "defense"
+    },
+    {
+      "id": "affix_crit_chance",
+      "name": "Critical Strike Chance",
+      "description": "+#% Critical Strike Chance",
+      "slots": ["helm", "gloves", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 2.5, "max": 5.5},
+        "ancestral": {"min": 5.5, "max": 10.0}
+      },
+      "type": "offense"
+    },
+    {
+      "id": "affix_crit_dmg",
+      "name": "Critical Strike Damage",
+      "description": "+#% Critical Strike Damage",
+      "slots": ["helm", "gloves", "amulet", "ring", "weapon", "offhand"],
+      "ranges": {
+        "sacred": {"min": 11, "max": 26},
+        "ancestral": {"min": 26, "max": 50}
+      },
+      "type": "offense"
+    },
+    {
+      "id": "affix_atk_speed",
+      "name": "Attack Speed",
+      "description": "+#% Attack Speed",
+      "slots": ["gloves", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 3.5, "max": 7.0},
+        "ancestral": {"min": 7.0, "max": 13.5}
+      },
+      "type": "offense"
+    },
+    {
+      "id": "affix_vuln_dmg",
+      "name": "Vulnerable Damage",
+      "description": "+#% Vulnerable Damage",
+      "slots": ["helm", "chest", "pants", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 9, "max": 19},
+        "ancestral": {"min": 19, "max": 36}
+      },
+      "type": "offense"
+    },
+    {
+      "id": "affix_overpower_dmg",
+      "name": "Overpower Damage",
+      "description": "+#% Overpower Damage",
+      "slots": ["helm", "gloves", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 10, "max": 22},
+        "ancestral": {"min": 22, "max": 44}
+      },
+      "type": "offense"
+    },
+    {
+      "id": "affix_cooldown_reduction",
+      "name": "Cooldown Reduction",
+      "description": "+#% Cooldown Reduction",
+      "slots": ["helm", "gloves", "amulet", "ring"],
+      "ranges": {
+        "sacred": {"min": 3.5, "max": 7.0},
+        "ancestral": {"min": 7.0, "max": 13.5}
+      },
+      "type": "utility"
+    },
+    {
+      "id": "affix_resource_gen",
+      "name": "Resource Generation",
+      "description": "+#% Resource Generation",
+      "slots": ["helm", "chest", "pants", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 5, "max": 12},
+        "ancestral": {"min": 12, "max": 24}
+      },
+      "type": "utility"
+    },
+    {
+      "id": "affix_movement_speed",
+      "name": "Movement Speed",
+      "description": "+#% Movement Speed",
+      "slots": ["boots", "pants"],
+      "ranges": {
+        "sacred": {"min": 8, "max": 14},
+        "ancestral": {"min": 14, "max": 20}
+      },
+      "type": "utility"
+    },
+    {
+      "id": "affix_lucky_hit_chance",
+      "name": "Lucky Hit Chance",
+      "description": "+#% Lucky Hit Chance",
+      "slots": ["gloves", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 3.5, "max": 7.0},
+        "ancestral": {"min": 7.0, "max": 13.5}
+      },
+      "type": "utility"
+    },
+    {
+      "id": "affix_core_skill_dmg",
+      "name": "Core Skill Damage",
+      "description": "+#% Core Skill Damage",
+      "slots": ["helm", "chest", "gloves", "pants", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 9, "max": 19},
+        "ancestral": {"min": 19, "max": 36}
+      },
+      "type": "skill_damage"
+    },
+    {
+      "id": "affix_mastery_skill_dmg",
+      "name": "Mastery Skill Damage",
+      "description": "+#% Mastery Skill Damage",
+      "slots": ["helm", "chest", "gloves", "pants", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 9, "max": 19},
+        "ancestral": {"min": 19, "max": 36}
+      },
+      "type": "skill_damage"
+    },
+    {
+      "id": "affix_imbuement_skill_dmg",
+      "name": "Imbuement Skill Damage",
+      "description": "+#% Imbuement Skill Damage",
+      "slots": ["helm", "chest", "gloves", "pants", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 9, "max": 19},
+        "ancestral": {"min": 19, "max": 36}
+      },
+      "type": "skill_damage"
+    },
+    {
+      "id": "affix_basic_skill_dmg",
+      "name": "Basic Skill Damage",
+      "description": "+#% Basic Skill Damage",
+      "slots": ["helm", "chest", "gloves", "pants", "amulet", "ring", "weapon"],
+      "ranges": {
+        "sacred": {"min": 9, "max": 19},
+        "ancestral": {"min": 19, "max": 36}
+      },
+      "type": "skill_damage"
+    }
+  ]
+}
