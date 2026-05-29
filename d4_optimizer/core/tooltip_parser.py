@@ -115,10 +115,24 @@ _SLOT_KEYWORD_MAP: dict[str, str] = {
     "off-hand": "offhand",
     "two-handed": "weapon",
     "two handed": "weapon",
+    "charm": "charm",
+    "grand charm": "charm",
+    "large charm": "charm",
+    "small charm": "charm",
 }
 
 _SLOT_RE = re.compile(
     r"\b(" + "|".join(re.escape(k) for k in sorted(_SLOT_KEYWORD_MAP, key=len, reverse=True)) + r")\b",
+    re.IGNORECASE,
+)
+
+# Rune detection patterns
+_RUNE_TYPE_RE = re.compile(
+    r"\b(ritual|invocation)\b\s*rune\b",
+    re.IGNORECASE,
+)
+_RUNE_EFFECT_RE = re.compile(
+    r"(?:effect\s*(?:when\s+triggered)?\s*:?\s*|trigger\s*:\s*|when\s+triggered\s*:?\s*)(.+)",
     re.IGNORECASE,
 )
 
@@ -132,20 +146,29 @@ def parse_tooltip(raw_tooltip: str, slot_hint: Optional[str] = None) -> Item:
     """
     Parse a single item tooltip text block into an Item dataclass.
 
+    Handles gear, charms, and runes. Runes are detected automatically when
+    the tooltip contains a "Ritual Rune" or "Invocation Rune" type line —
+    no slot_hint needed for them.
+
     Args:
         raw_tooltip:  Raw text of one item tooltip.
         slot_hint:    If provided, overrides slot detection (e.g. "ring").
-                      Required when the slot cannot be inferred from the tooltip
-                      (e.g. a rare ring has no "Ring" keyword in the item name).
+                      Required for items whose slot cannot be inferred from
+                      the tooltip (e.g. a rare ring has no "Ring" keyword).
 
     Returns:
         A populated Item ready for use in the optimizer.
 
     Raises:
-        ValueError: If item power cannot be found in the tooltip text.
+        ValueError: If item power cannot be found and item is not a rune/charm.
     """
     lines = [l.rstrip() for l in raw_tooltip.strip().splitlines()]
     lines = [l for l in lines if l.strip()]  # drop blank lines
+
+    # Fast-path: rune detection (runes have no "Item Power" line)
+    rune_type_match = _RUNE_TYPE_RE.search(raw_tooltip)
+    if rune_type_match:
+        return _parse_rune_tooltip(lines, rune_type_match.group(1).lower())
 
     item_power: Optional[int] = None
     tier = "ancestral"
@@ -252,13 +275,17 @@ def parse_tooltip(raw_tooltip: str, slot_hint: Optional[str] = None) -> Item:
                 if len(stripped) > 2:
                     item_name = stripped
 
-    if item_power is None:
-        raise ValueError(
-            "Could not find 'Item Power' in tooltip text. "
-            "Ensure the tooltip includes a line like 'Item Power 925'."
-        )
-
+    # Charms may omit "Item Power" on some tooltip formats — treat as 0
     final_slot = slot_hint or inferred_slot or "unknown"
+    if item_power is None:
+        if final_slot == "charm":
+            item_power = 0
+        else:
+            raise ValueError(
+                "Could not find 'Item Power' in tooltip text. "
+                "Ensure the tooltip includes a line like 'Item Power 925'. "
+                "For runes, no slot_hint is needed — they are detected automatically."
+            )
     if not item_name:
         item_name = f"{tier.title()} Item ({final_slot.title()})"
 
@@ -272,6 +299,70 @@ def parse_tooltip(raw_tooltip: str, slot_hint: Optional[str] = None) -> Item:
         aspect_description=aspect_description,
         is_unique=is_unique,
         unique_power_value=unique_power_value,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Rune-specific parser
+# ---------------------------------------------------------------------------
+
+def _parse_rune_tooltip(lines: list[str], rune_type: str) -> Item:
+    """
+    Parse a rune tooltip into an Item with is_rune=True.
+
+    Expected format:
+        Ohm
+        Ritual Rune
+        Effect when triggered: Generate 42 Fury
+
+    Or (invocation):
+        Ber
+        Invocation Rune
+        Trigger: Lucky Hit
+        Effect: Gain Berserking for 5 seconds
+    """
+    name = ""
+    effect_parts: list[str] = []
+
+    rune_type_line_found = False
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        # Skip the "Ritual Rune" / "Invocation Rune" type line
+        if _RUNE_TYPE_RE.search(stripped):
+            rune_type_line_found = True
+            continue
+
+        # First non-type, non-empty line = rune name
+        if not name and not rune_type_line_found:
+            name = stripped
+            continue
+        if not name and rune_type_line_found:
+            # Name came before the type line
+            pass
+
+        # Effect lines
+        effect_match = _RUNE_EFFECT_RE.match(stripped)
+        if effect_match:
+            effect_parts.append(effect_match.group(1).strip())
+        elif rune_type_line_found and not _RUNE_TYPE_RE.search(stripped):
+            # Any remaining non-type line after the type declaration is effect text
+            effect_parts.append(stripped)
+
+    # If name wasn't captured before the type line, grab the first line
+    if not name and lines:
+        name = lines[0].strip()
+
+    return Item(
+        slot="rune",
+        name=name,
+        item_power=0,
+        tier="none",
+        is_rune=True,
+        rune_type=rune_type,
+        rune_effect=" | ".join(effect_parts) if effect_parts else "",
     )
 
 
@@ -365,7 +456,10 @@ def interactive_import(output_path: Optional[Path] = None) -> list[Item]:
             item.slot = slot_input or "unknown"
 
         items.append(item)
-        print(f"  ✓ Parsed: {item.name} [{item.slot}] IP:{item.item_power} — {len(item.affixes)} affixes\n")
+        if item.is_rune:
+            print(f"  ✓ Parsed: {item.name} [rune/{item.rune_type}] — {item.rune_effect}\n")
+        else:
+            print(f"  ✓ Parsed: {item.name} [{item.slot}] IP:{item.item_power} — {len(item.affixes)} affixes\n")
 
     if output_path:
         _save_items(items, output_path)
@@ -390,6 +484,14 @@ def _save_items(items: list[Item], path: Path) -> None:
 
 
 def _item_to_dict(item: Item) -> dict:
+    if item.is_rune:
+        return {
+            "slot": "rune",
+            "name": item.name,
+            "rune_type": item.rune_type or "unknown",
+            "effect": item.rune_effect or "",
+        }
+
     d: dict = {
         "slot": item.slot,
         "name": item.name,

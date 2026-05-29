@@ -31,16 +31,20 @@ class ItemAffix:
 
 @dataclass
 class Item:
-    slot: str
+    slot: str          # gear slot, "charm", or "rune"
     name: str
-    item_power: int
-    tier: str                          # "ancestral", "sacred", etc.
+    item_power: int    # 0 for runes (they have no item power)
+    tier: str          # "ancestral", "sacred", etc.; "none" for runes
     affixes: list[ItemAffix] = field(default_factory=list)
     aspect_name: Optional[str] = None
     aspect_description: Optional[str] = None
     is_unique: bool = False
     unique_power_value: Optional[float] = None
     item_id: Optional[str] = None      # unique stash reference
+    # Rune-specific fields
+    is_rune: bool = False
+    rune_type: Optional[str] = None    # "ritual" or "invocation"
+    rune_effect: Optional[str] = None  # full effect description text
 
 
 # ---------------------------------------------------------------------------
@@ -66,48 +70,78 @@ You are an expert Diablo 4 build optimizer assistant operating with mathematical
 Your role is to analyze a player's equipped items against their stash inventory and produce
 a slot-by-slot upgrade audit report in structured Markdown.
 
-## Reasoning Protocol
+The input JSON contains three item categories. Apply the correct reasoning protocol for each:
 
-You MUST follow this exact chain of reasoning for EVERY equipment slot before writing output:
+---
 
-1. **Read the equipped item** for this slot: note each affix name, its rolled value, and
-   its theoretical min/max range from the provided database context.
-2. **Compute a per-affix efficiency score**: efficiency = (rolled_value - min) / (max - min).
+## Protocol A — Gear (helm, chest, gloves, pants, boots, amulet, ring, weapon, offhand)
+
+For every gear slot:
+
+1. **Read the equipped item**: note each affix name, its rolled value, and its theoretical
+   min/max range from the provided database context.
+2. **Compute per-affix efficiency**: efficiency = (rolled_value - min) / (max - min).
    A score of 1.0 = perfect roll; 0.0 = minimum roll.
-3. **Compute the slot's composite quality score**: average of all affix efficiency scores.
+3. **Compute composite slot quality**: average of all affix efficiency scores.
 4. **Identify missing priority stats**: cross-reference the guide's stat priority list for
    this slot. Flag any priority stat that is absent from the equipped item.
-5. **Scan every stash candidate for the same slot**: for each candidate, repeat steps 1–4.
+5. **Scan every stash gear candidate for the same slot**: repeat steps 1–4 for each.
 6. **Compare multi-variable combinations**: do NOT compare single affixes in isolation.
-   An upgrade is valid only when the stash item's COMBINED weighted stat advantage
-   is strictly greater than the equipped item—accounting for all affixes simultaneously.
-7. **State an explicit upgrade verdict**: UPGRADE, SIDEGRADE, or NO UPGRADE with a
-   one-sentence justification citing specific numerical differences.
-8. **Check unique/aspect requirements**: if the guide mandates a specific unique or aspect
-   in this slot, flag any mismatch prominently.
+   An upgrade requires the stash item's COMBINED weighted advantage to be strictly greater
+   across all affixes simultaneously.
+7. **State an explicit verdict**: UPGRADE, SIDEGRADE, or NO UPGRADE with a one-sentence
+   justification citing specific numerical differences.
+8. **Check unique/aspect requirements**: flag guide-mandated uniques or aspects that are
+   absent with 🚨.
+
+---
+
+## Protocol B — Charms
+
+Charms have affixes like gear but no slot conflict (multiple charms can be equipped).
+For each equipped charm:
+
+1. List the charm's affixes and their rolled values (no efficiency scoring — charms have
+   no fixed rolling range in the database).
+2. Cross-reference the guide's recommended charm affixes. Flag missing priorities with ⚠️.
+3. Scan stash charms for candidates that provide strictly better affix coverage for the build.
+4. Verdict: REPLACE (better coverage), KEEP (equal or superior), or OPTIONAL (marginal gain).
+
+---
+
+## Protocol C — Runes
+
+Runes have no numeric affixes. Evaluation is qualitative.
+For each equipped runeword (Ritual + Invocation pair):
+
+1. State the Ritual rune's trigger condition and the Invocation rune's effect.
+2. Cross-reference the guide's recommended runewords. Flag mismatches with 🚨.
+3. Scan stash runes for better-synergizing combinations. Explain WHY the combination
+   is superior for this specific build (e.g., "Lucky Hit trigger fires more frequently
+   with this skill rotation, making this Invocation rune proc more reliably").
+4. Verdict: SWAP or KEEP with a one-sentence reasoning.
+
+---
 
 ## Output Format Rules
 
 - Begin with a `# Upgrade Audit Report` header.
-- Use one `## [Slot Name]` section per equipment slot.
-- Within each slot section, always include:
-  - `### Equipped Item` subsection with affix table and efficiency scores.
-  - `### Top Stash Candidates` subsection listing up to 3 best stash alternatives.
-  - `### Verdict` with the upgrade decision and justification.
-- Use Markdown tables for affix comparisons. Columns: Affix | Rolled | Min | Max | Efficiency%.
-- Use **bold** for stat values that exceed the equipped item.
-- Flag missing priority stats with ⚠️ prefix.
-- Flag guide-mandated uniques/aspects that are absent with 🚨 prefix.
-- End the report with a `## Summary` section listing all recommended swaps in priority order.
+- Use one `## [Slot / Item Name]` section per item.
+- Gear sections include `### Equipped Item`, `### Top Stash Candidates`, `### Verdict`.
+- Charm sections include `### Equipped Charms`, `### Stash Charm Candidates`, `### Verdict`.
+- Rune sections include `### Equipped Runewords`, `### Stash Rune Candidates`, `### Verdict`.
+- Use Markdown tables for gear affix comparisons: Affix | Rolled | Min | Max | Efficiency%.
+- Use **bold** for values that exceed the equipped item.
+- Flag missing priority stats with ⚠️. Flag missing required uniques/aspects/runes with 🚨.
+- End with a `## Summary` section listing all recommended swaps in priority order.
 
 ## Constraints
 
-- Never guess stat values. Use only the values explicitly provided in the stash JSON.
-- Never hallucinate affix names. If a name is ambiguous, use the closest match from the
-  provided database context and note the uncertainty.
-- Do not recommend cosmetic or lore-only improvements.
-- Temperature is set low; respond with precise numerical reasoning, not subjective prose.
-- If the stash contains no candidates for a slot, state "No stash candidates for this slot."
+- Never guess stat values. Use only values explicitly in the stash JSON.
+- Never hallucinate affix or rune names.
+- Rune evaluation is qualitative — do not fabricate numeric proc rates.
+- Temperature is set low; respond with precise reasoning, not subjective prose.
+- If the stash has no candidates for a slot/type, state "No stash candidates."
 """).strip()
 
 
@@ -118,7 +152,18 @@ You MUST follow this exact chain of reasoning for EVERY equipment slot before wr
 
 def _serialize_item(item: Item) -> dict[str, Any]:
     """Compact JSON-serializable dict for an Item."""
-    d: dict[str, Any] = {
+    if item.is_rune:
+        d: dict[str, Any] = {
+            "slot": "rune",
+            "name": item.name,
+            "rune_type": item.rune_type or "unknown",
+            "effect": item.rune_effect or "",
+        }
+        if item.item_id:
+            d["item_id"] = item.item_id
+        return d
+
+    d = {
         "slot": item.slot,
         "name": item.name,
         "item_power": item.item_power,
@@ -320,10 +365,13 @@ class InferenceEngine:
         Returns:
             AuditReport with the complete Markdown audit and token usage stats.
         """
-        # Pre-filter stash items below the configured item power floor
+        # Pre-filter stash items below the configured item power floor.
+        # Runes and charms are always included regardless of item_power.
         viable_stash = [
             item for item in stash
-            if item.item_power >= self._config.min_item_power
+            if item.is_rune
+            or item.slot == "charm"
+            or item.item_power >= self._config.min_item_power
         ]
 
         # Split into batches

@@ -34,7 +34,19 @@ from d4_optimizer.core.ingestion import parse_guide, ParsedGuide
 
 def _deserialize_item(raw: dict[str, Any]) -> Item:
     """Convert a raw dict (from JSON input) into a typed Item dataclass."""
-    required = ("slot", "name", "item_power")
+    # Runes have a different schema — no item_power, no affixes
+    if raw.get("slot") == "rune" or raw.get("rune_type"):
+        return Item(
+            slot="rune",
+            name=raw.get("name", "Unknown Rune"),
+            item_power=0,
+            tier="none",
+            is_rune=True,
+            rune_type=raw.get("rune_type", "unknown"),
+            rune_effect=raw.get("effect", ""),
+        )
+
+    required = ("slot", "name")
     missing = [k for k in required if k not in raw]
     if missing:
         raise ValueError(f"Item JSON missing required keys: {missing}. Got: {list(raw.keys())}")
@@ -51,7 +63,7 @@ def _deserialize_item(raw: dict[str, Any]) -> Item:
     return Item(
         slot=raw["slot"],
         name=raw["name"],
-        item_power=int(raw["item_power"]),
+        item_power=int(raw.get("item_power", 0)),
         tier=raw.get("tier", "ancestral"),
         affixes=affixes,
         aspect_name=raw.get("aspect"),
