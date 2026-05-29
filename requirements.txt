@@ -1,2 +1,10 @@
+# LLM providers (install at least one)
 anthropic>=0.40.0
 google-generativeai>=0.8.0
+
+# Automated capture — clipboard mode (all platforms)
+# No extra dependencies required; uses stdlib ctypes + subprocess
+
+# Automated capture — accessibility mode (Windows only)
+pywin32>=306; sys_platform == "win32"
+comtypes>=1.4.0; sys_platform == "win32"
